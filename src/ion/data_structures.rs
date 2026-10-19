@@ -310,7 +310,12 @@ pub struct SpillSet {
     pub range: CodeRange,
 }
 
-pub(crate) const MAX_SPLITS_PER_SPILLSET: u8 = 2;
+/// How many times a bundle (counted per spillset) is split in two before
+/// `split_into_minimal_bundles` takes over. That fallback bounds compile time on
+/// inputs needing O(|bundle|) splits, but it leaves every gap between uses in the
+/// spill bundle, so a long bundle that only needed a few splits to get around
+/// call clobbers also spills in the loops it spans.
+pub(crate) const MAX_SPLITS_PER_SPILLSET: u8 = 4;
 
 #[derive(Clone, Debug)]
 pub struct VRegData {
